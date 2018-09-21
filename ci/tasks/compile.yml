@@ -17,7 +17,3 @@ caches:
   - path: repo/.sbt
   - path: repo/.ivy2/cache
   - path: repo/.coursier/cache/v1
-
-
-params:
-  PROJECT_TYPE:
