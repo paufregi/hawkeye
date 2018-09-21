@@ -1,0 +1,19 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: hseeberger/scala-sbt
+inputs:
+  - name: repo
+outputs:
+  - name: test-result
+run:
+  path: /bin/bash
+  args:
+    - repo/ci/tasks/compile.sh
+
+caches:
+  - path: repo/.sbt
+  - path: repo/.ivy2/cache
+  - path: repo/.coursier/cache/v1
