@@ -1,6 +1,6 @@
 ---
 resources:
-- name: repo
+- name: hawkeye-repo
   type: git
   source:
     uri: git@github.com:paufregi/hawkeye.git
@@ -11,9 +11,6 @@ jobs:
 - name: compile
   serial: true
   plan:
-  - aggregate:
-    - get: repo
+    - get: hawkeye-repo
     - task: build
-      file: repo/ci/tasks/build.yml
-      params:
-        PROJECT_TYPE: ((project-type))
+      file: hawkeye-repo/ci/tasks/compile.yml
