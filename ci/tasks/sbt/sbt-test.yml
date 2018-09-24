@@ -11,8 +11,6 @@ outputs:
 run:
   path: /bin/bash
   args:
-    - repo/ci/tasks/sbt-test.sh
+    - repo/ci/tasks/sbt/sbt-test.sh
 caches:
-  - path: .sbt
-  - path: .ivy2/cache
-  - path: .coursier/cache/v1
+  - path: .ivy2
