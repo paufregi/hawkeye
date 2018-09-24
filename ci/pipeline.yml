@@ -12,5 +12,7 @@ jobs:
   serial: true
   plan:
     - get: hawkeye-repo
-    - task: build
-      file: hawkeye-repo/ci/tasks/compile.yml
+    - task: test
+      file: hawkeye-repo/ci/tasks/sbt/sbt-test.yml
+      input_mapping:
+        repo: hawkeye-repo
