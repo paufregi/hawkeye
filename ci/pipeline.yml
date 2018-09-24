@@ -8,7 +8,7 @@ resources:
     check_every: 30s
 
 jobs:
-- name: compile
+- name: test
   serial: true
   plan:
     - get: hawkeye-repo
