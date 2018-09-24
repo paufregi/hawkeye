@@ -7,7 +7,7 @@ image_resource:
 inputs:
   - name: repo
 outputs:
-  - name: test-result
+  - name: artifact
 run:
   path: /bin/bash
   args:
