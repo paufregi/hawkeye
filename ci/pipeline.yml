@@ -17,11 +17,13 @@ resources:
     - src/*
     private_key: ((github-private-key))
     repo: paufregi/hawkeye
+
 resource_types:
 - name: pull-request
   type: docker-image
   source:
     repository: jtarchie/pr
+
 jobs:
 - name: verify
   serial: true
