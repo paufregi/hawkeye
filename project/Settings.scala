@@ -9,8 +9,6 @@ object Settings {
 
   lazy val general = Seq(
     scalaVersion := Version.SCALA,
-
-
     resolvers ++= Seq(
       Resolver.defaultLocal,
       Resolver.mavenLocal

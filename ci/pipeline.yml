@@ -3,16 +3,52 @@ resources:
 - name: hawkeye-repo
   type: git
   source:
-    uri: git@github.com:paufregi/hawkeye.git
-    private_key: ((github-private-key))
     check_every: 30s
+    private_key: ((github-private-key))
+    uri: git@github.com:paufregi/hawkeye.git
+- name: pull-request
+  type: pull-request
+  source:
+    access_token: ((github-access-token))
+    branch: master
+    every: true
+    paths:
+    - src/*
+    private_key: ((github-private-key))
+    repo: paufregi/hawkeye
+
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
 
 jobs:
-- name: compile
+- name: verify
   serial: true
   plan:
+  - aggregate:
+    - get: pull-request
+      trigger: true
+      params:
+        fetch_merge: true
+      version: every
     - get: hawkeye-repo
-    - task: test
-      file: hawkeye-repo/ci/tasks/sbt/sbt-test.yml
-      input_mapping:
-        repo: hawkeye-repo
+  - put: pull-request
+    params:
+      path: pull-request
+      status: pending
+  - task: sbt-test
+    file: hawkeye-repo/ci/tasks/sbt/sbt-test.yml
+    input_mapping:
+      repo: hawkeye-repo
+    on_success:
+      put: pull-request
+      params:
+        path: pull-request
+        status: success
+      on_failure:
+        put: pull-request
+        params:
+          path: pull-request
+          status: failure

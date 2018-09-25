@@ -9,6 +9,11 @@ lazy val root = (project in file("."))
     organization := "lab.acme",
     version := "0.1.0-SNAPSHOT"
   )
+  .settings(
+    mainClass in assembly := Some("lab.acme.Main"),
+    test in assembly := {},
+    assemblyJarName in assembly := "hawkeye.jar"
+  )
   .settings(libraryDependencies ++= Seq (
     typesafeConfig,
     scalaLogging
