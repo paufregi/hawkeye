@@ -87,3 +87,19 @@ jobs:
   - put: version
     params:
       file: new-version/version
+- name: build-jar
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed: [bump-version]
+    - get: version
+      passed: [bump-version]
+      trigger: true
+  - task: sbt-assembly
+    file: hawkeye-repo/ci/tasks/sbt/sbt-assembly.yml
+    input_mapping:
+      repo: hawkeye-repo
+  - put: jar-artifact
+    params:
+      file: artifact/hawkeye-*
