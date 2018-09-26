@@ -6,6 +6,7 @@ image_resource:
     repository: hseeberger/scala-sbt
 inputs:
   - name: repo
+  - name: version
 outputs:
   - name: artifact
 run:
