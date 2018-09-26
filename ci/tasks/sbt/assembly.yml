@@ -19,7 +19,7 @@ outputs:
 run:
   path: /bin/bash
   args:
-    - repo/ci/tasks/sbt/sbt-assembly.sh
+    - repo/ci/tasks/sbt/assembly.sh
 
 caches:
   - path: .ivy2
