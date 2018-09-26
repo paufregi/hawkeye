@@ -1,7 +1,8 @@
 #!/bin/bash
 
-export WORKING_FOLDER=$( pwd )
+WORKING_FOLDER=$( pwd )
+IVY_FOLDER="$WORKING_FOLDER/.ivy2"
 
 cd repo
 
-sbt -ivy $WORKING_FOLDER/.ivy2 clean compile test
+sbt -ivy "$IVY_FOLDER" clean compile test

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 WORKING_FOLDER=$( pwd )
-ARTIFACT_FOLDER="$WORKING_FOLDER/artifact"
 IVY_FOLDER="$WORKING_FOLDER/.ivy2"
+ARTIFACT_FOLDER="$WORKING_FOLDER/artifact"
 VERSION=$(cat version/version)
 
 cd repo
