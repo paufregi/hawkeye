@@ -7,7 +7,6 @@ lazy val root = (project in file("."))
   .settings(
     name := "hawkeye",
     organization := "lab.acme",
-    version := "0.1.0-SNAPSHOT"
   )
   .settings(
     mainClass in assembly := Some("lab.acme.Main"),
