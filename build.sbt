@@ -11,7 +11,8 @@ lazy val root = (project in file("."))
   .settings(
     mainClass in assembly := Some("lab.acme.Main"),
     test in assembly := {},
-    assemblyJarName in assembly := "hawkeye.jar"
+    target in assembly := file("target"),
+    assemblyJarName in assembly := s"${name.value}.jar",
   )
   .settings(libraryDependencies ++= Seq (
     typesafeConfig,
