@@ -16,6 +16,21 @@ resources:
     - src/*
     private_key: ((github-private-key))
     repo: paufregi/hawkeye
+- name: version
+  type: semver
+  source:
+    initial_version: 0.0.0
+    key: hawkeye/version
+    bucket: mm-shark
+    access_key_id: ((aws-access-key-id))
+    secret_access_key: ((aws-secret-access-key))
+    region_name: us-east-1
+- name: concourse-tasks
+  type: git
+  source:
+    uri: git@github.com:movio/concourse-tasks.git
+    branch: master
+    private_key: ((github-private-key))
 
 resource_types:
 - name: pull-request
@@ -25,7 +40,6 @@ resource_types:
 
 jobs:
 - name: verify
-  serial: true
   plan:
   - aggregate:
     - get: pull-request
@@ -52,3 +66,21 @@ jobs:
         params:
           path: pull-request
           status: failure
+- name: bump-version
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      trigger: true
+    - get: version
+    - get: concourse-tasks
+  - task: bump-version
+    file: concourse-tasks/version/tasks/bump-version.yaml
+    input_mapping:
+      tasks: concourse-tasks
+      repo: hawkeye-repo
+    params:
+      VERSION_PATH: version
+  - put: version
+    params:
+      file: new-version/version
