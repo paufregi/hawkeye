@@ -56,7 +56,7 @@ jobs:
       path: pull-request
       status: pending
   - task: sbt-test
-    file: pull-request/ci/tasks/sbt/sbt-test.yml
+    file: pull-request/ci/tasks/sbt/test.yml
     input_mapping:
       repo: pull-request
     on_success:
@@ -97,7 +97,7 @@ jobs:
       passed: [bump-version]
       trigger: true
   - task: sbt-assembly
-    file: hawkeye-repo/ci/tasks/sbt/sbt-assembly.yml
+    file: hawkeye-repo/ci/tasks/sbt/assembly.yml
     input_mapping:
       repo: hawkeye-repo
   - put: jar-artifact
