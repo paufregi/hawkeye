@@ -6,6 +6,8 @@ resources:
     uri: git@github.com:paufregi/hawkeye.git
     private_key: ((github-private-key))
     check_every: 30s
+    paths:
+    - arrow/*
 - name: pull-request
   type: pull-request
   source:
@@ -13,12 +15,14 @@ resources:
     access_token: ((github-access-token))
     private_key: ((github-private-key))
     every: true
+    paths:
+    - arrow/*
 - name: version
   type: semver
   source:
     region_name: us-east-1
     bucket: mm-shark
-    key: hawkeye/version
+    key: hawkeye/arrow/version
     initial_version: 0.0.0
     access_key_id: ((aws-access-key-id))
     secret_access_key: ((aws-secret-access-key))
@@ -32,7 +36,7 @@ resources:
   source:
     region_name: us-east-1
     bucket: mm-shark
-    regexp: hawkeye/hawkeye-(\d+\.\d+\.\d+)
+    regexp: hawkeye/arrow/hawkeye-(\d+\.\d+\.\d+)
     access_key_id: ((aws-access-key-id))
     secret_access_key: ((aws-secret-access-key))
 

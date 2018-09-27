@@ -5,11 +5,10 @@ lazy val arrow = (project in file("arrow"))
   .settings(Defaults.itSettings : _*)
   .settings(Settings.general: _*)
   .settings(
-    name := "hawkeye",
+    name := "arrow",
     organization := "lab.acme",
   )
   .settings(
-    mainClass in assembly := Some("lab.acme.Main"),
     test in assembly := {},
     target in assembly := file("target"),
     assemblyJarName in assembly := s"${name.value}.jar",
