@@ -1,6 +1,6 @@
 import Dependencies._
 
-lazy val root = (project in file("."))
+lazy val arrow = (project in file("arrow"))
   .configs(IntegrationTest)
   .settings(Defaults.itSettings : _*)
   .settings(Settings.general: _*)
