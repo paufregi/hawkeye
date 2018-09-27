@@ -1,4 +1,9 @@
-*.class
+# scala #
+#########
 *.log
-.idea
 target
+
+# python #
+###############
+.env
+.pytest_cache
