@@ -6,4 +6,5 @@ target
 # python #
 ###############
 .env
+Pipfile.lock
 .pytest_cache
