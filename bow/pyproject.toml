@@ -1,2 +1,0 @@
-[tool.black]
-exclude = "(.env|_workdir|__pycache__)"
