@@ -31,14 +31,6 @@ resources:
   source:
     uri: git@github.com:movio/concourse-tasks.git
     private_key: ((github-private-key))
-- name: jar-artifact
-  type: s3
-  source:
-    region_name: us-east-1
-    bucket: mm-shark
-    regexp: hawkeye/arrow/hawkeye-(\d+\.\d+\.\d+)
-    access_key_id: ((aws-access-key-id))
-    secret_access_key: ((aws-secret-access-key))
 
 resource_types:
 - name: pull-request
@@ -87,23 +79,7 @@ jobs:
       tasks: concourse-tasks
       repo: hawkeye-repo
     params:
-      VERSION_PATH: version
+      VERSION_PATH: arrow/version
   - put: version
     params:
       file: new-version/version
-- name: build-jar
-  serial: true
-  plan:
-  - aggregate:
-    - get: hawkeye-repo
-      passed: [bump-version]
-    - get: version
-      passed: [bump-version]
-      trigger: true
-  - task: sbt-assembly
-    file: hawkeye-repo/ci/tasks/sbt/assembly.yml
-    input_mapping:
-      repo: hawkeye-repo
-  - put: jar-artifact
-    params:
-      file: artifact/hawkeye-*
