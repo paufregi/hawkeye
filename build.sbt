@@ -15,7 +15,9 @@ lazy val arrow = (project in file("arrow"))
   )
   .settings(libraryDependencies ++= Seq (
     typesafeConfig,
-    scalaLogging
+    scalaLogging,
+    http4sDsl,
+    http4sBlazeServer
   ))
   .settings(libraryDependencies ++= testDependencies(Seq(
     scalatest
