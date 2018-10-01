@@ -14,4 +14,5 @@ object Main extends App {
     .serve
     .compile
     .drain
+    .unsafeRunSync
 }
