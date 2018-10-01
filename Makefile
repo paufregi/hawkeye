@@ -6,16 +6,17 @@ CONCOURSE_PASSWORD = test
 .PHONY : ci
 
 ### CI
-ci : ci-clint ci-arrow ## Set all the pipeline in concourse.
-
-ci-clint: concourse-login
+ci : concourse-login ## Set all the pipeline in concourse.
+	$(FLY) -t local set-pipeline -p arrow -c arrow/ci/pipeline.yml -l ci/credentials.yml
 	$(FLY) -t local set-pipeline -p clint -c clint/ci/pipeline.yml -l ci/credentials.yml
 
-ci-arrow: concourse-login
-	$(FLY) -t local set-pipeline -p arrow -c arrow/ci/pipeline.yml -l ci/credentials.yml
+ci-validate: concourse-login ## Validate
+	$(FLY) validate-pipeline -c arrow/ci/pipeline.yml -l ci/credentials.yml
+	$(FLY) validate-pipeline -c clint/ci/pipeline.yml -l ci/credentials.yml
 
 concourse-login :
 	$(FLY) login -t local -u $(CONCOURSE_USER) -p $(CONCOURSE_PASSWORD) -c $(CONCOURSE_URL)
+
 
 
 ### Misc
