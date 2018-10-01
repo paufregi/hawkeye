@@ -1,0 +1,28 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: alpine
+
+params:
+  DOCKERFILE_PATH: Dockerfile
+  RESOURCES:
+  NAME:
+
+inputs:
+  - name: repo
+  - name: artifact
+  - name: version
+
+outputs:
+  - name: docker-src
+
+run:
+  path: sh
+  args:
+    - repo/ci/tasks/docker/prepare.sh
+
+caches:
+  - path: .ivy2

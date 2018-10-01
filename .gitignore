@@ -1,4 +1,10 @@
-*.class
+# scala #
+#########
 *.log
-.idea
 target
+
+# python #
+###############
+.env
+Pipfile.lock
+.pytest_cache

@@ -1,0 +1,116 @@
+---
+resources:
+- name: hawkeye-repo
+  type: git
+  source:
+    uri: git@github.com:paufregi/hawkeye.git
+    private_key: ((github-private-key))
+    check_every: 30s
+    paths:
+    - arrow/*
+- name: pull-request
+  type: pull-request
+  source:
+    repo: paufregi/hawkeye
+    access_token: ((github-access-token))
+    private_key: ((github-private-key))
+    every: true
+    paths:
+    - arrow/*
+- name: version
+  type: semver
+  source:
+    region_name: us-east-1
+    bucket: mm-shark
+    key: hawkeye/arrow/version
+    initial_version: 0.0.0
+    access_key_id: ((aws-access-key-id))
+    secret_access_key: ((aws-secret-access-key))
+- name: concourse-tasks
+  type: git
+  source:
+    uri: git@github.com:movio/concourse-tasks.git
+    private_key: ((github-private-key))
+- name: image
+  type: docker-image
+  source:
+    repository: 191213556404.dkr.ecr.us-east-1.amazonaws.com/hawkeye-arrow
+    aws_access_key_id: ((aws-access-key-id))
+    aws_secret_access_key: ((aws-secret-access-key))
+
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
+
+jobs:
+- name: verify
+  plan:
+  - aggregate:
+    - get: pull-request
+      trigger: true
+      version: every
+      params:
+        fetch_merge: true
+  - put: pull-request
+    params:
+      path: pull-request
+      status: pending
+  - task: sbt-test
+    file: pull-request/ci/tasks/sbt/test.yml
+    input_mapping:
+      repo: pull-request
+    on_success:
+      put: pull-request
+      params:
+        path: pull-request
+        status: success
+    on_failure:
+      put: pull-request
+      params:
+        path: pull-request
+        status: failure
+- name: bump-version
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      trigger: true
+    - get: version
+    - get: concourse-tasks
+  - task: bump-version
+    file: concourse-tasks/version/tasks/bump-version.yaml
+    input_mapping:
+      tasks: concourse-tasks
+      repo: hawkeye-repo
+    params:
+      VERSION_PATH: arrow/version
+  - put: version
+    params:
+      file: new-version/version
+- name: build-image
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed: [bump-version]
+    - get: version
+      passed: [bump-version]
+      trigger: true
+  - task: sbt-assembly
+    file: hawkeye-repo/ci/tasks/sbt/assembly.yml
+    input_mapping:
+      repo: hawkeye-repo
+  - task: prepare-docker
+    file: hawkeye-repo/ci/tasks/docker/prepare.yml
+    input_mapping:
+      repo: hawkeye-repo
+    params:
+      DOCKERFILE_PATH: arrow/docker/Dockerfile
+      NAME: arrow
+  - put: image
+    params:
+      build: docker-src
+      tag: version/version
+      tag_as_latest: false

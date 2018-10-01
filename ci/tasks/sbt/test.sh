@@ -1,9 +1,7 @@
 #!/bin/bash
 
 WORKING_FOLDER=$( pwd )
-IVY_FOLDER="$WORKING_FOLDER/.ivy2"
-SOURCE_FOLDER="repo/$SRC_PATH"
 
-cd "$SOURCE_FOLDER"
+cd "repo/$SRC_PATH"
 
-sbt -ivy "$IVY_FOLDER" clean compile test
+sbt -ivy "$WORKING_FOLDER/.ivy2" clean compile test
