@@ -8,6 +8,7 @@ image_resource:
 
 params:
   SRC_PATH: .
+  PROJECT:
 
 inputs:
   - name: repo
