@@ -125,15 +125,17 @@ jobs:
         trigger: true
     - task: deploy
       file: hawkeye-repo/ci/tasks/kube/apply.yml
+      input_mapping:
+        repo: hawkeye-repo
 - name: deploy-us-prod
   serial: true
   plan:
   - aggregate:
     - get: hawkeye-repo
       passed: [deploy-dev]
-    - get: image
-      passed: [deploy-dev]
     - get: version
       passed: [deploy-dev]
   - task: deploy
     file: hawkeye-repo/ci/tasks/kube/apply.yml
+    input_mapping:
+      repo: hawkeye-repo
