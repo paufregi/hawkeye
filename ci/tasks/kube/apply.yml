@@ -13,7 +13,6 @@ params:
 
 inputs:
 - name: repo
-- name: image
 - name: version
 
 outputs:
