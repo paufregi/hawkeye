@@ -1,4 +1,9 @@
----
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
+
 resources:
 - name: hawkeye-repo
   type: git
@@ -8,6 +13,9 @@ resources:
     check_every: 30s
     paths:
     - clint/*
+    - project/*
+    - build.sbt
+    - ci/*
 - name: pull-request
   type: pull-request
   source:
@@ -17,6 +25,8 @@ resources:
     every: true
     paths:
     - clint/*
+    - project/*
+    - build.sbt
 - name: version
   type: semver
   source:
@@ -39,12 +49,6 @@ resources:
     regexp: hawkeye/clint/clint-(\d+\.\d+\.\d+)
     access_key_id: ((aws-access-key-id))
     secret_access_key: ((aws-secret-access-key))
-
-resource_types:
-- name: pull-request
-  type: docker-image
-  source:
-    repository: jtarchie/pr
 
 jobs:
 - name: verify
