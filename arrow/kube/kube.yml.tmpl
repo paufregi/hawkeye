@@ -2,32 +2,32 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: hawkeye-bow-svc
+  name: hawkeye-arrrow-svc
   namespace: mm-shark
   labels:
-    name: hawkeye-bow-svc
+    name: hawkeye-arrrow-svc
 spec:
   ports:
     - port: 80
       targetPort: http
   selector:
-    name: hawkeye-bow-svc
+    name: hawkeye-arrrow-svc
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: hawkeye-bow-svc
+  name: hawkeye-arrrow-svc
   namespace: mm-shark
 spec:
   replicas: 2
   template:
     metadata:
       labels:
-        name: hawkeye-bow-svc
+        name: hawkeye-arrrow-svc
     spec:
       containers:
-      - name: hawkeye-bow-svc
-        image: 191213556404.dkr.ecr.us-east-1.amazonaws.com/hackeye-bow:${TAG}
+      - name: hawkeye-arrrow-svc
+        image: 191213556404.dkr.ecr.us-east-1.amazonaws.com/hackeye-arrrow:${TAG}
         resources:
           requests:
             cpu: 50m
