@@ -10,7 +10,7 @@ lazy val arrow = (project in file("arrow"))
   )
   .settings(
     test in assembly := {},
-    target in assembly := file("arrow/target"),
+    target in assembly := file("target"),
     assemblyJarName in assembly := s"${name.value}.jar",
     mainClass in assembly := Some("lab.acme.Main"),
   )
