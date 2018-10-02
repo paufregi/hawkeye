@@ -12,14 +12,13 @@ params:
   NAME:
 
 inputs:
-  - name: repo
-  - name: artifact
-  - name: version
+- name: repo
+- name: version
 
 outputs:
-  - name: docker-src
+- name: docker-src
 
 run:
   path: sh
   args:
-    - repo/ci/tasks/docker/prepare.sh
+  - repo/ci/tasks/kube/apply.sh

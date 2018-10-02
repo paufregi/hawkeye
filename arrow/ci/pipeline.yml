@@ -114,3 +114,28 @@ jobs:
       build: docker-src
       tag: version/version
       tag_as_latest: false
+- name: deploy-dev
+  serial: true
+  plan:
+    - aggregate:
+      - get: hawkeye-repo
+        passed: [build-image]
+      - get: version
+        passed: [build-image]
+        trigger: true
+    - task: deploy
+      file: hawkeye-repo/ci/tasks/kube/apply.yml
+      input_mapping:
+        repo: hawkeye-repo
+- name: deploy-us-prod
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed: [deploy-dev]
+    - get: version
+      passed: [deploy-dev]
+  - task: deploy
+    file: hawkeye-repo/ci/tasks/kube/apply.yml
+    input_mapping:
+      repo: hawkeye-repo
