@@ -23,6 +23,3 @@ run:
   path: sh
   args:
     - repo/ci/tasks/docker/prepare.sh
-
-caches:
-  - path: .ivy2
