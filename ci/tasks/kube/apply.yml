@@ -1,0 +1,25 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: alpine
+
+params:
+  DOCKERFILE_PATH: Dockerfile
+  RESOURCES:
+  NAME:
+
+inputs:
+- name: repo
+- name: image
+- name: version
+
+outputs:
+- name: docker-src
+
+run:
+  path: sh
+  args:
+  - repo/ci/tasks/kube/apply.sh
