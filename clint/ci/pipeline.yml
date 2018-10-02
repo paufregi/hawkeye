@@ -67,6 +67,8 @@ jobs:
     file: pull-request/ci/tasks/sbt/test.yml
     input_mapping:
       repo: pull-request
+    params:
+      PROJECT: clint
     on_success:
       put: pull-request
       params:
@@ -108,6 +110,8 @@ jobs:
     file: hawkeye-repo/ci/tasks/sbt/assembly.yml
     input_mapping:
       repo: hawkeye-repo
+    params:
+      PROJECT: clint
   - put: jar-artifact
     params:
       file: artifact/clint-*
