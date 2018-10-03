@@ -12,7 +12,7 @@ resources:
     private_key: ((github-private-key))
     check_every: 30s
     paths:
-    - clint/*
+    - archery/arrow/*
     - project/*
     - build.sbt
     - ci/*
@@ -24,7 +24,7 @@ resources:
     private_key: ((github-private-key))
     every: true
     paths:
-    - clint/*
+    - archery/arrow/*
     - project/*
     - build.sbt
 - name: version
@@ -32,7 +32,7 @@ resources:
   source:
     region_name: us-east-1
     bucket: mm-shark
-    key: hawkeye/clint/version
+    key: hawkeye/archery/arrow/version
     initial_version: 0.0.0
     access_key_id: ((aws-access-key-id))
     secret_access_key: ((aws-secret-access-key))
@@ -41,14 +41,12 @@ resources:
   source:
     uri: git@github.com:movio/concourse-tasks.git
     private_key: ((github-private-key))
-- name: jar-artifact
-  type: s3
+- name: image
+  type: docker-image
   source:
-    region_name: us-east-1
-    bucket: mm-shark
-    regexp: hawkeye/clint/clint-(\d+\.\d+\.\d+)
-    access_key_id: ((aws-access-key-id))
-    secret_access_key: ((aws-secret-access-key))
+    repository: 191213556404.dkr.ecr.us-east-1.amazonaws.com/hawkeye-arrow
+    aws_access_key_id: ((aws-access-key-id))
+    aws_secret_access_key: ((aws-secret-access-key))
 
 jobs:
 - name: verify
@@ -68,7 +66,7 @@ jobs:
     input_mapping:
       repo: pull-request
     params:
-      PROJECT: clint
+      PROJECT: arrow
     on_success:
       put: pull-request
       params:
@@ -93,11 +91,11 @@ jobs:
       tasks: concourse-tasks
       repo: hawkeye-repo
     params:
-      VERSION_PATH: clint/version
+      VERSION_PATH: archery/arrow/version
   - put: version
     params:
       file: new-version/version
-- name: release-jar
+- name: build-image
   serial: true
   plan:
   - aggregate:
@@ -111,7 +109,41 @@ jobs:
     input_mapping:
       repo: hawkeye-repo
     params:
-      PROJECT: clint
-  - put: jar-artifact
+      PROJECT: arrow
+  - task: prepare-docker
+    file: hawkeye-repo/ci/tasks/docker/prepare.yml
+    input_mapping:
+      repo: hawkeye-repo
     params:
-      file: artifact/clint-*
+      DOCKERFILE_PATH: archery/arrow/docker/Dockerfile
+      NAME: arrow
+  - put: image
+    params:
+      build: docker-src
+      tag: version/version
+      tag_as_latest: false
+- name: deploy-dev
+  serial: true
+  plan:
+    - aggregate:
+      - get: hawkeye-repo
+        passed: [build-image]
+      - get: version
+        passed: [build-image]
+        trigger: true
+    - task: deploy
+      file: hawkeye-repo/ci/tasks/kube/apply.yml
+      input_mapping:
+        repo: hawkeye-repo
+- name: deploy-us-prod
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed: [deploy-dev]
+    - get: version
+      passed: [deploy-dev]
+  - task: deploy
+    file: hawkeye-repo/ci/tasks/kube/apply.yml
+    input_mapping:
+      repo: hawkeye-repo
