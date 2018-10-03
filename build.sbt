@@ -1,6 +1,6 @@
 import Dependencies._
 
-lazy val arrow = (project in file("katana"))
+lazy val katana = (project in file("katana"))
   .configs(IntegrationTest)
   .settings(Defaults.itSettings : _*)
   .settings(Settings.general: _*)
