@@ -49,8 +49,6 @@ jobs:
     - get: pull-request
       trigger: true
       version: every
-      params:
-        fetch_merge: true
   - put: pull-request
     params:
       path: pull-request
@@ -61,16 +59,16 @@ jobs:
       repo: pull-request
     params:
       PROJECT: katana
-    on_success:
-      put: pull-request
-      params:
-        path: pull-request
-        status: success
-    on_failure:
-      put: pull-request
-      params:
-        path: pull-request
-        status: failure
+  on_success:
+    put: pull-request
+    params:
+      path: pull-request
+      status: success
+  on_failure:
+    put: pull-request
+    params:
+      path: pull-request
+      status: failure
 - name: bump-version
   serial: true
   plan:
