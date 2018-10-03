@@ -1,11 +1,11 @@
 import Dependencies._
 
-lazy val arrow = (project in file("arrow"))
+lazy val katana = (project in file("katana"))
   .configs(IntegrationTest)
   .settings(Defaults.itSettings : _*)
   .settings(Settings.general: _*)
   .settings(
-    name := "arrow",
+    name := "katana",
     organization := "lab.acme",
   )
   .settings(
@@ -24,12 +24,12 @@ lazy val arrow = (project in file("arrow"))
     scalatest
   )))
 
-lazy val clint = (project in file("clint"))
+lazy val clint = (project in file("archery/arrow"))
   .configs(IntegrationTest)
   .settings(Defaults.itSettings : _*)
   .settings(Settings.general: _*)
   .settings(
-    name := "clint",
+    name := "arrow",
     organization := "lab.acme",
   )
   .settings(
