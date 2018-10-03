@@ -122,6 +122,8 @@ jobs:
       file: hawkeye-repo/ci/tasks/kube/apply.yml
       input_mapping:
         repo: hawkeye-repo
+      params:
+        TEMPLATE: katana/kube/kube.yml.tmpl
 - name: deploy-us-prod
   serial: true
   plan:
@@ -134,3 +136,5 @@ jobs:
     file: hawkeye-repo/ci/tasks/kube/apply.yml
     input_mapping:
       repo: hawkeye-repo
+    params:
+      TEMPLATE: katana/kube/kube.yml.tmpl
