@@ -3,7 +3,7 @@
 apk add --update curl gettext > /dev/null
 TAG="$(cat version/version)"
 
-cat "repo/${TEMPLATE}" | envsubst '${TAG}' > kube-file.yaml
+envsubst < "repo/${TEMPLATE}" > kube-file.yml
 
-echo kube-file.yaml
-cat kube-file.yaml
+echo kube-file.yml
+cat kube-file.yml
