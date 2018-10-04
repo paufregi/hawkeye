@@ -18,4 +18,4 @@ outputs:
 run:
   path: sh
   args:
-  - repo/ci/tasks/python/test.sh
+    - repo/ci/tasks/python/test.sh

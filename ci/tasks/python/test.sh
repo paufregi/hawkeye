@@ -1,7 +1,13 @@
 #!/bin/sh
 
+set -v
+
+echo "installing pipenv"
+
 pip install pipenv
 
-cd "repo/$SRC_PATH"
-pipenv install -d
-pipenv run pytest
+echo "pipenv installed"
+
+#cd "repo/$SRC_PATH"
+#pipenv install -d
+#pipenv run pytest
