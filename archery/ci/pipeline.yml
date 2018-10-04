@@ -3,10 +3,6 @@ resources:
 - name: hawkeye-repo
   type: git
   source:
-    paths:
-    - archery/*
-    - project/*
-    - build.sbt
     private_key: ((github-private-key))
     uri: git@github.com:paufregi/hawkeye.git
 - name: pull-request-scala
@@ -156,7 +152,7 @@ jobs:
       repo: hawkeye-repo
   - put: jar-artifact
     params:
-      file: artifact/hawkeye-*
+      file: artifact/arrow-*
 - name: build-image
   serial: true
   plan:
@@ -172,7 +168,7 @@ jobs:
     file: hawkeye-repo/archery/ci/tasks/prepare-docker.yml
     params:
       DOCKERFILE_PATH: archery/bow/docker/Dockerfile
-      SRC_DIR: archery/bow
+      SRC_PATH: archery/bow
     input_mapping:
       repo: hawkeye-repo
 - name: deploy-uat
