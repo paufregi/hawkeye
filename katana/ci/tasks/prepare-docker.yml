@@ -22,4 +22,4 @@ outputs:
 run:
   path: sh
   args:
-  - repo/ci/tasks/docker/prepare.sh
+  - repo/katana/ci/tasks/prepare-docker.sh
