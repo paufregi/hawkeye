@@ -35,7 +35,7 @@ resources:
     access_key_id: ((aws-access-key-id))
     bucket: mm-shark
     initial_version: 0.0.0
-    key: hawkeye/katana/version
+    key: hawkeye/archery/version
     region_name: us-east-1
     secret_access_key: ((aws-secret-access-key))
 - name: concourse-tasks
@@ -164,12 +164,12 @@ jobs:
       passed:
       - build-image
   - task: deploy
-    file: hawkeye-repo/archery/tasks/deploy.yml
+    file: hawkeye-repo/archery/ci/tasks/deploy.yml
     params:
       ENV: uat
     input_mapping:
       repo: hawkeye-repo
-- name: deploy-prod
+- name: deploy-prod-us
   serial: true
   plan:
   - aggregate:
@@ -180,8 +180,24 @@ jobs:
       passed:
       - deploy-uat
   - task: deploy
-    file: hawkeye-repo/archery/tasks/deploy.yml
+    file: hawkeye-repo/archery/ci/tasks/deploy.yml
     params:
-      ENV: prod
+      ENV: prod-us
+    input_mapping:
+      repo: hawkeye-repo
+- name: deploy-prod-eu
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed:
+      - deploy-uat
+    - get: version
+      passed:
+      - deploy-uat
+  - task: deploy
+    file: hawkeye-repo/archery/ci/tasks/deploy.yml
+    params:
+      ENV: prod-eu
     input_mapping:
       repo: hawkeye-repo

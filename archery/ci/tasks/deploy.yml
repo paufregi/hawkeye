@@ -16,4 +16,4 @@ inputs:
 run:
   path: sh
   args:
-  - repo/archery/ci/task/deploy.sh
+  - repo/archery/ci/tasks/deploy.sh
