@@ -1,5 +1,14 @@
 groups: []
 resources:
+- name: hawkeye-repo
+  type: git
+  source:
+    paths:
+    - archery/*
+    - project/*
+    - build.sbt
+    private_key: ((github-private-key))
+    uri: git@github.com:paufregi/hawkeye.git
 - name: pull-request-scala
   type: pull-request
   source:
@@ -18,10 +27,22 @@ resources:
     every: true
     paths:
     - archery/bow/*
-    - archery/*
-    - ci/*
     private_key: ((github-private-key))
     repo: paufregi/hawkeye
+- name: version
+  type: semver
+  source:
+    access_key_id: ((aws-access-key-id))
+    bucket: mm-shark
+    initial_version: 0.0.0
+    key: hawkeye/katana/version
+    region_name: us-east-1
+    secret_access_key: ((aws-secret-access-key))
+- name: concourse-tasks
+  type: git
+  source:
+    private_key: ((github-private-key))
+    uri: git@github.com:movio/concourse-tasks.git
 resource_types:
 - name: pull-request
   type: docker-image
@@ -91,3 +112,76 @@ jobs:
       context: archery/python
       path: pull-request-python
       status: success
+- name: bump-version
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+    - get: version
+    - get: concourse-tasks
+  - task: bump-version
+    file: concourse-tasks/version/tasks/bump-version.yaml
+    params:
+      VERSION_PATH: archery/version
+    input_mapping:
+      repo: hawkeye-repo
+      tasks: concourse-tasks
+  - put: version
+    params:
+      file: new-version/version
+- name: build-image
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed:
+      - bump-version
+    - get: version
+      passed:
+      - bump-version
+      trigger: true
+  - task: sbt-assembly
+    file: hawkeye-repo/ci/tasks/sbt/assembly.yml
+    params:
+      PROJECT: arrow
+    input_mapping:
+      repo: hawkeye-repo
+  - task: prepare-docker
+    file: hawkeye-repo/ci/tasks/docker/prepare.yml
+    params:
+      DOCKERFILE_PATH: archery/bow/docker/Dockerfile
+      NAME: arrow
+    input_mapping:
+      repo: hawkeye-repo
+- name: deploy-uat
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed:
+      - build-image
+    - get: version
+      passed:
+      - build-image
+  - task: deploy
+    file: hawkeye-repo/archery/tasks/deploy.yml
+    params:
+      ENV: uat
+    input_mapping:
+      repo: hawkeye-repo
+- name: deploy-prod
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed:
+      - deploy-uat
+    - get: version
+      passed:
+      - deploy-uat
+  - task: deploy
+    file: hawkeye-repo/archery/tasks/deploy.yml
+    params:
+      ENV: prod
+    input_mapping:
+      repo: hawkeye-repo
