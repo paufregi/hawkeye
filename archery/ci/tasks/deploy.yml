@@ -7,7 +7,7 @@ image_resource:
     repository: alpine
 
 params:
-  TEMPLATE:
+  ENV:
 
 inputs:
 - name: repo
@@ -16,4 +16,4 @@ inputs:
 run:
   path: sh
   args:
-  - repo/ci/tasks/kube/apply.sh
+  - repo/archery/ci/task/deploy.sh

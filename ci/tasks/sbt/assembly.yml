@@ -11,16 +11,16 @@ params:
   PROJECT:
 
 inputs:
-  - name: repo
-  - name: version
+- name: repo
+- name: version
 
 outputs:
-  - name: artifact
+- name: artifact
 
 run:
   path: /bin/bash
   args:
-    - repo/ci/tasks/sbt/assembly.sh
+  - repo/ci/tasks/sbt/assembly.sh
 
 caches:
-  - path: .ivy2
+- path: .ivy2

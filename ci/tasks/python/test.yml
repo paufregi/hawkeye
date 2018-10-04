@@ -4,18 +4,19 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: python:3.6-alpine
+    repository: python
+    tag: 3.6-alpine
 
 params:
   SRC_PATH: .
 
 inputs:
-  - name: repo
+- name: repo
 
 outputs:
-  - name: test-result
+- name: test-result
 
 run:
   path: sh
   args:
-    - repo/ci/tasks/python/test.sh
+  - repo/ci/tasks/python/test.sh

@@ -1,31 +1,53 @@
-resource_types:
-- name: pull-request
-  type: docker-image
-  source:
-    repository: jtarchie/pr
-
+groups: []
 resources:
+- name: hawkeye-repo
+  type: git
+  source:
+    paths:
+    - archery/*
+    - project/*
+    - build.sbt
+    private_key: ((github-private-key))
+    uri: git@github.com:paufregi/hawkeye.git
 - name: pull-request-scala
   type: pull-request
   source:
-    repo: paufregi/hawkeye
     access_token: ((github-access-token))
-    private_key: ((github-private-key))
     every: true
     paths:
     - archery/arrow/*
     - project/*
     - build.sbt
+    private_key: ((github-private-key))
+    repo: paufregi/hawkeye
 - name: pull-request-python
   type: pull-request
   source:
-    repo: paufregi/hawkeye
     access_token: ((github-access-token))
-    private_key: ((github-private-key))
     every: true
     paths:
     - archery/bow/*
-
+    private_key: ((github-private-key))
+    repo: paufregi/hawkeye
+- name: version
+  type: semver
+  source:
+    access_key_id: ((aws-access-key-id))
+    bucket: mm-shark
+    initial_version: 0.0.0
+    key: hawkeye/katana/version
+    region_name: us-east-1
+    secret_access_key: ((aws-secret-access-key))
+- name: concourse-tasks
+  type: git
+  source:
+    private_key: ((github-private-key))
+    uri: git@github.com:movio/concourse-tasks.git
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
 jobs:
 - name: verify-scala
   plan:
@@ -34,34 +56,34 @@ jobs:
     version: every
   - put: pull-request-scala
     params:
-      path: pull-request-scala
       context: archery/scala
+      path: pull-request-scala
       status: pending
   - aggregate:
     - task: sbt-test
       file: pull-request-scala/ci/tasks/sbt/test.yml
-      input_mapping:
-        repo: pull-request-scala
       params:
         PROJECT: arrow
+      input_mapping:
+        repo: pull-request-scala
     - task: sbt-it-test
       file: pull-request-scala/ci/tasks/sbt/it-test.yml
-      input_mapping:
-        repo: pull-request-scala
       params:
         PROJECT: arrow
-  on_success:
-    put: pull-request-scala
-    params:
-      path: pull-request-scala
-      context: archery/scala
-      status: success
+      input_mapping:
+        repo: pull-request-scala
   on_failure:
     put: pull-request-scala
     params:
-      path: pull-request-scala
       context: archery/scala
+      path: pull-request-scala
       status: failure
+  on_success:
+    put: pull-request-scala
+    params:
+      context: archery/scala
+      path: pull-request-scala
+      status: success
 - name: verify-python
   plan:
   - get: pull-request-python
@@ -69,25 +91,97 @@ jobs:
     version: every
   - put: pull-request-python
     params:
-      path: pull-request-python
       context: archery/python
+      path: pull-request-python
       status: pending
   - task: pytest
     file: pull-request-python/ci/tasks/python/test.yml
-    input_mapping:
-      repo: pull-request-python
     params:
       SRC_PATH: archery/bow
-  on_success:
-    put: pull-request-python
-    params:
-      path: pull-request-python
-      context: archery/python
-      status: success
+    input_mapping:
+      repo: pull-request-python
   on_failure:
     put: pull-request-python
     params:
-      path: pull-request-python
       context: archery/python
+      path: pull-request-python
       status: failure
-
+  on_success:
+    put: pull-request-python
+    params:
+      context: archery/python
+      path: pull-request-python
+      status: success
+- name: bump-version
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+    - get: version
+    - get: concourse-tasks
+  - task: bump-version
+    file: concourse-tasks/version/tasks/bump-version.yaml
+    params:
+      VERSION_PATH: archery/version
+    input_mapping:
+      repo: hawkeye-repo
+      tasks: concourse-tasks
+  - put: version
+    params:
+      file: new-version/version
+- name: build-image
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed:
+      - bump-version
+    - get: version
+      passed:
+      - bump-version
+      trigger: true
+  - task: sbt-assembly
+    file: hawkeye-repo/ci/tasks/sbt/assembly.yml
+    params:
+      PROJECT: arrow
+    input_mapping:
+      repo: hawkeye-repo
+  - task: prepare-docker
+    file: hawkeye-repo/ci/tasks/docker/prepare.yml
+    params:
+      DOCKERFILE_PATH: archery/bow/docker/Dockerfile
+      NAME: arrow
+    input_mapping:
+      repo: hawkeye-repo
+- name: deploy-uat
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed:
+      - build-image
+    - get: version
+      passed:
+      - build-image
+  - task: deploy
+    file: hawkeye-repo/archery/tasks/deploy.yml
+    params:
+      ENV: uat
+    input_mapping:
+      repo: hawkeye-repo
+- name: deploy-prod
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed:
+      - deploy-uat
+    - get: version
+      passed:
+      - deploy-uat
+  - task: deploy
+    file: hawkeye-repo/archery/tasks/deploy.yml
+    params:
+      ENV: prod
+    input_mapping:
+      repo: hawkeye-repo
