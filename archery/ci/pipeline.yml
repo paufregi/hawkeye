@@ -161,6 +161,7 @@ jobs:
       passed:
       - build-image
     - get: version
+      trigger: true
       passed:
       - build-image
   - task: deploy
