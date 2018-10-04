@@ -29,43 +29,48 @@ resources:
 jobs:
 - name: verify-scala
   plan:
-  - aggregate:
-    - get: pull-request-scala
-      trigger: true
-      version: every
+  - get: pull-request-scala
+    trigger: true
+    version: every
   - put: pull-request-scala
     params:
       path: pull-request-scala
-      context: scala
+      context: archery/scala
       status: pending
-  - task: sbt-test
-    file: pull-request-scala/ci/tasks/sbt/test.yml
-    input_mapping:
-      repo: pull-request-scala
-    params:
-      PROJECT: arrow
+  - aggregate:
+    - task: sbt-test
+      file: pull-request-scala/ci/tasks/sbt/test.yml
+      input_mapping:
+        repo: pull-request-scala
+      params:
+        PROJECT: arrow
+    - task: sbt-it-test
+      file: pull-request-scala/ci/tasks/sbt/it-test.yml
+      input_mapping:
+        repo: pull-request-scala
+      params:
+        PROJECT: arrow
   on_success:
     put: pull-request-scala
     params:
       path: pull-request-scala
-      context: scala
+      context: archery/scala
       status: success
   on_failure:
     put: pull-request-scala
     params:
       path: pull-request-scala
-      context: scala
+      context: archery/scala
       status: failure
 - name: verify-python
   plan:
-  - aggregate:
-    - get: pull-request-python
-      trigger: true
-      version: every
+  - get: pull-request-python
+    trigger: true
+    version: every
   - put: pull-request-python
     params:
       path: pull-request-python
-      context: python
+      context: archery/python
       status: pending
   - task: pytest
     file: pull-request-python/ci/tasks/python/test.yml
@@ -77,12 +82,12 @@ jobs:
     put: pull-request-python
     params:
       path: pull-request-python
-      context: python
+      context: archery/python
       status: success
   on_failure:
     put: pull-request-python
     params:
       path: pull-request-python
-      context: python
+      context: archery/python
       status: failure
 
