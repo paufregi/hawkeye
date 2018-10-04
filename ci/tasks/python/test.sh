@@ -1,12 +1,10 @@
 #!/bin/sh
 
-set -v
-
 echo "installing pipenv"
 
-pip install pipenv
+#pip install pipenv
 
-echo "pipenv installed"
+#echo "pipenv installed"
 
 #cd "repo/$SRC_PATH"
 #pipenv install -d

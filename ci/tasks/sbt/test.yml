@@ -11,15 +11,15 @@ params:
   PROJECT:
 
 inputs:
-  - name: repo
+- name: repo
 
 outputs:
-  - name: test-result
+- name: test-result
 
 run:
   path: /bin/bash
   args:
-    - repo/ci/tasks/sbt/test.sh
+  - repo/ci/tasks/sbt/test.sh
 
 caches:
-  - path: .ivy2
+- path: .ivy2
