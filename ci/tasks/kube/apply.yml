@@ -13,9 +13,6 @@ inputs:
 - name: repo
 - name: version
 
-outputs:
-- name: docker-src
-
 run:
   path: sh
   args:
