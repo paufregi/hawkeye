@@ -1,10 +1,10 @@
-import sys
+from datetime import datetime
 
 from luigi import Task, DateIntervalParameter
 
 
 class BowTask(Task):
-    time = DateIntervalParameter()
+    time = DateIntervalParameter(default=datetime.now())
 
     def output(self):
         pass
