@@ -60,11 +60,11 @@ jobs:
       params:
         PROJECT: katana
     - task: sbt-it-test
-        file: pull-request/ci/tasks/sbt/it-test.yml
-        input_mapping:
-          repo: pull-request
-        params:
-          PROJECT: katana
+      file: pull-request/ci/tasks/sbt/it-test.yml
+      input_mapping:
+        repo: pull-request
+      params:
+        PROJECT: katana
   on_success:
     put: pull-request
     params:
