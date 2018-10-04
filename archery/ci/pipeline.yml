@@ -137,9 +137,9 @@ jobs:
       passed:
       - bump-version
     - get: version
+      trigger: true
       passed:
       - bump-version
-      trigger: true
   - task: sbt-assembly
     file: hawkeye-repo/ci/tasks/sbt/assembly.yml
     params:
@@ -169,7 +169,7 @@ jobs:
       ENV: uat
     input_mapping:
       repo: hawkeye-repo
-- name: deploy-prod-us
+- name: deploy-prod
   serial: true
   plan:
   - aggregate:
@@ -179,6 +179,17 @@ jobs:
     - get: version
       passed:
       - deploy-uat
+- name: deploy-prod-us
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed:
+      - deploy-prod
+    - get: version
+      trigger: true
+      passed:
+      - deploy-prod
   - task: deploy
     file: hawkeye-repo/archery/ci/tasks/deploy.yml
     params:
@@ -191,10 +202,11 @@ jobs:
   - aggregate:
     - get: hawkeye-repo
       passed:
-      - deploy-uat
+      - deploy-prod
     - get: version
+      trigger: true
       passed:
-      - deploy-uat
+      - deploy-prod
   - task: deploy
     file: hawkeye-repo/archery/ci/tasks/deploy.yml
     params:
