@@ -43,6 +43,14 @@ resources:
   source:
     private_key: ((github-private-key))
     uri: git@github.com:movio/concourse-tasks.git
+- name: jar-artifact
+  type: s3
+  source:
+    access_key_id: ((aws-access-key-id))
+    secret_access_key: ((aws-secret-access-key))
+    bucket: mm-shark
+    region_name: us-east-1
+    regexp: hawkeye/archery/archery-(\d+\.\d+\.\d+)
 resource_types:
 - name: pull-request
   type: docker-image
@@ -129,7 +137,7 @@ jobs:
   - put: version
     params:
       file: new-version/version
-- name: build-image
+- name: build-jar
   serial: true
   plan:
   - aggregate:
@@ -146,11 +154,25 @@ jobs:
       PROJECT: arrow
     input_mapping:
       repo: hawkeye-repo
+  - put: jar-artifact
+    params:
+      file: artifact/hawkeye-*
+- name: build-image
+  serial: true
+  plan:
+  - aggregate:
+    - get: hawkeye-repo
+      passed:
+      - bump-version
+    - get: version
+      trigger: true
+      passed:
+      - bump-version
   - task: prepare-docker
-    file: hawkeye-repo/ci/tasks/docker/prepare.yml
+    file: hawkeye-repo/archery/ci/tasks/prepare-docker.yml
     params:
       DOCKERFILE_PATH: archery/bow/docker/Dockerfile
-      NAME: arrow
+      SRC_DIR: archery/bow
     input_mapping:
       repo: hawkeye-repo
 - name: deploy-uat
@@ -159,10 +181,12 @@ jobs:
   - aggregate:
     - get: hawkeye-repo
       passed:
+      - build-jar
       - build-image
     - get: version
       trigger: true
       passed:
+      - build-jar
       - build-image
   - task: deploy
     file: hawkeye-repo/archery/ci/tasks/deploy.yml
