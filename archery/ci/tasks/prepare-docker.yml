@@ -12,7 +12,6 @@ params:
 
 inputs:
 - name: repo
-- name: artifact
 - name: version
 
 outputs:
