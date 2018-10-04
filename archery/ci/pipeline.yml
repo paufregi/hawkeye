@@ -35,7 +35,7 @@ jobs:
       version: every
   - put: pull-request-scala
     params:
-      path: ppull-request-scala
+      path: pull-request-scala
       context: scala
       status: pending
   - task: sbt-test
