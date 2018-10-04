@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: alpine
+
+params:
+  ENV:
+
+inputs:
+- name: repo
+- name: version
+
+run:
+  path: sh
+  args:
+  - repo/archery/ci/task/deploy.sh
