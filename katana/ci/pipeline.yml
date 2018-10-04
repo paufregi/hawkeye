@@ -112,7 +112,7 @@ jobs:
     input_mapping:
       repo: hawkeye-repo
   - task: prepare-docker
-    file: hawkeye-repo/ci/tasks/docker/prepare.yml
+    file: hawkeye-repo/katana/ci/tasks/prepare-docker.yml
     params:
       DOCKERFILE_PATH: katana/docker/Dockerfile
       NAME: katana
