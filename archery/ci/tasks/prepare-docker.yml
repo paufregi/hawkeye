@@ -20,4 +20,4 @@ outputs:
 run:
   path: sh
   args:
-  - repo/ci/tasks/docker/prepare.sh
+  - repo/archery/ci/tasks/docker/prepare.sh
