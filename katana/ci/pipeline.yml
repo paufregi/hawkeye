@@ -15,7 +15,6 @@ resources:
     - katana/*
     - project/*
     - build.sbt
-    - ci/*
 - name: pull-request
   type: pull-request
   source:
@@ -45,29 +44,38 @@ resources:
 jobs:
 - name: verify
   plan:
-  - aggregate:
-    - get: pull-request
-      trigger: true
-      version: every
+  - get: pull-request
+    trigger: true
+    version: every
   - put: pull-request
     params:
       path: pull-request
+      context: katana/scala
       status: pending
-  - task: sbt-test
-    file: pull-request/ci/tasks/sbt/test.yml
-    input_mapping:
-      repo: pull-request
-    params:
-      PROJECT: katana
+  - aggregate:
+    - task: sbt-test
+      file: pull-request/ci/tasks/sbt/test.yml
+      input_mapping:
+        repo: pull-request
+      params:
+        PROJECT: katana
+    - task: sbt-it-test
+      file: pull-request/ci/tasks/sbt/it-test.yml
+      input_mapping:
+        repo: pull-request
+      params:
+        PROJECT: katana
   on_success:
     put: pull-request
     params:
       path: pull-request
+      context: katana/scala
       status: success
   on_failure:
     put: pull-request
     params:
       path: pull-request
+      context: katana/scala
       status: failure
 - name: bump-version
   serial: true
