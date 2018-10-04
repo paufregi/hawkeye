@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -v
+
 pip install pipenv
 
 cd "repo/$SRC_PATH"
