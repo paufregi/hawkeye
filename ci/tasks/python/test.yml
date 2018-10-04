@@ -10,10 +10,10 @@ params:
   SRC_PATH: .
 
 inputs:
-- name: repo
+  - name: repo
 
 outputs:
-- name: test-result
+  - name: test-result
 
 run:
   path: sh
