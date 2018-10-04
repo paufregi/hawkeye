@@ -19,4 +19,4 @@ outputs:
 run:
   path: sh
   args:
-  - repo/ci/tasks/kube/apply.sh
+    - repo/ci/tasks/kube/apply.sh
