@@ -24,7 +24,7 @@ lazy val katana = (project in file("katana"))
     scalatest
   )))
 
-lazy val clint = (project in file("archery/arrow"))
+lazy val arrow = (project in file("archery/arrow"))
   .configs(IntegrationTest)
   .settings(Defaults.itSettings : _*)
   .settings(Settings.general: _*)
