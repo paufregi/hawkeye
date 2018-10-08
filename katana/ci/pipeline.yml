@@ -1,4 +1,13 @@
-groups: []
+groups:
+- name: verify
+  jobs:
+  - verify
+- name: deployment
+  jobs:
+  - bump-version
+  - build-image
+  - deploy-dev
+  - deploy-us-prod
 resources:
 - name: hawkeye-repo
   type: git
