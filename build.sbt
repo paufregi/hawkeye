@@ -1,47 +1,23 @@
-import Dependencies._
+import lab.acme.hawkeye._
+import lab.acme.hawkeye.Dependencies._
+import sbt._
 
-lazy val katana = (project in file("katana"))
-  .configs(IntegrationTest)
-  .settings(Defaults.itSettings : _*)
-  .settings(Settings.general: _*)
-  .settings(
-    name := "katana",
-    organization := "lab.acme",
-  )
-  .settings(
-    test in assembly := {},
-    target in assembly := file("target"),
-    assemblyJarName in assembly := s"${name.value}.jar",
-    mainClass in assembly := Some("lab.acme.Main"),
-  )
-  .settings(libraryDependencies ++= Seq (
+lazy val katana = project
+  .basic("katana", "katana", "lab.acme")
+  .withAssembly("target", "lab.acme.katana.Main")
+  .withLibraries(
     typesafeConfig,
     scalaLogging,
     http4sDsl,
     http4sBlazeServer
-  ))
-  .settings(libraryDependencies ++= testDependencies(Seq(
-    scalatest
-  )))
+  )
+  .withTestLibraries(scalatest)
 
-lazy val arrow = (project in file("archery/arrow"))
-  .configs(IntegrationTest)
-  .settings(Defaults.itSettings : _*)
-  .settings(Settings.general: _*)
-  .settings(
-    name := "arrow",
-    organization := "lab.acme",
-  )
-  .settings(
-    test in assembly := {},
-    target in assembly := file("target"),
-    assemblyJarName in assembly := s"${name.value}.jar",
-    mainClass in assembly := Some("lab.acme.Main"),
-  )
-  .settings(libraryDependencies ++= Seq (
+lazy val arrow = project
+  .basic("archery/arrow", "arrow", "lab.acme")
+  .withAssembly("target", "lab.acme.archery.arrow.Main")
+  .withLibraries(
     typesafeConfig,
-    scalaLogging,
-  ))
-  .settings(libraryDependencies ++= testDependencies(Seq(
-    scalatest
-  )))
+    scalaLogging
+  )
+  .withTestLibraries(scalatest)
