@@ -5,5 +5,7 @@ TAG="$(cat version/version)"
 
 envsubst < "repo/${TEMPLATE}" > kube-file.yml
 
-echo kube-file.yml
+echo "kubectl --context --apply -f kube-file.yml"
+echo
+echo "kube-file.yml"
 cat kube-file.yml
