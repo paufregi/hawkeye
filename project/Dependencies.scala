@@ -1,3 +1,5 @@
+package lab.acme.hawkeye
+
 import sbt._
 
 object Dependencies {

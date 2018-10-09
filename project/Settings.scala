@@ -1,3 +1,5 @@
+package lab.acme.hawkeye
+
 import sbt.Keys._
 import sbt._
 
