@@ -36,7 +36,7 @@ resources:
     access_key_id: ((aws-access-key-id))
     bucket: mm-shark
     initial_version: 0.0.0
-    key: hawkeye/katana/version
+    key: hawkeye/versions/katana
     region_name: us-east-1
     secret_access_key: ((aws-secret-access-key))
 - name: concourse-tasks
