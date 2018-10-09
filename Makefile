@@ -10,10 +10,12 @@ CONCOURSE_PASSWORD = test
 ci : concourse-login ## Set all the pipeline in concourse.
 	$(FLY) -t local set-pipeline -p katana -c katana/ci/pipeline.yml -l ci/credentials.yml
 	$(FLY) -t local set-pipeline -p archery -c archery/ci/pipeline.yml -l ci/credentials.yml
+	$(FLY) -t local set-pipeline -p crossbow -c crossbow/ci/pipeline.yml -l ci/credentials.yml
 
 ci-validate: concourse-login ## Validate
 	$(FLY) validate-pipeline -c katana/ci/pipeline.yml -l ci/credentials.yml
 	$(FLY) validate-pipeline -c archery/ci/pipeline.yml -l ci/credentials.yml
+	$(FLY) validate-pipeline -c crossbow/ci/pipeline.yml -l ci/credentials.yml
 
 concourse-login :
 	$(FLY) login -t local -u $(CONCOURSE_USER) -p $(CONCOURSE_PASSWORD) -c $(CONCOURSE_URL)

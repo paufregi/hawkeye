@@ -2,19 +2,17 @@ groups:
 - name: verify
   jobs:
   - verify
-- name: deployment
+- name: release
   jobs:
   - bump-version
-  - build-image
-  - deploy-dev
-  - deploy-us-prod
+  - release
 resources:
 - name: hawkeye-repo
   type: git
   source:
     check_every: 30s
     paths:
-    - katana/*
+    - crossbow/*
     - project/*
     - build.sbt
     private_key: ((github-private-key))
@@ -25,7 +23,7 @@ resources:
     access_token: ((github-access-token))
     every: true
     paths:
-    - katana/*
+    - crossbow/*
     - project/*
     - build.sbt
     private_key: ((github-private-key))
@@ -36,7 +34,7 @@ resources:
     access_key_id: ((aws-access-key-id))
     bucket: mm-shark
     initial_version: 0.0.0
-    key: hawkeye/versions/katana
+    key: hawkeye/crossbow/version
     region_name: us-east-1
     secret_access_key: ((aws-secret-access-key))
 - name: concourse-tasks
@@ -44,6 +42,14 @@ resources:
   source:
     private_key: ((github-private-key))
     uri: git@github.com:movio/concourse-tasks.git
+- name: jar-artifact
+  type: s3
+  source:
+    access_key_id: ((aws-access-key-id))
+    secret_access_key: ((aws-secret-access-key))
+    bucket: mm-shark
+    region_name: us-east-1
+    regexp: hawkeye/artifacts/crossbow/crossbow-(\d+\.\d+\.\d+)
 resource_types:
 - name: pull-request
   type: docker-image
@@ -53,36 +59,35 @@ jobs:
 - name: verify
   plan:
   - get: pull-request
-    trigger: true
     version: every
   - put: pull-request
     params:
-      context: katana/scala
+      context: crossbow/scala
       path: pull-request
       status: pending
   - aggregate:
     - task: sbt-test
       file: pull-request/ci/tasks/sbt/test.yml
       params:
-        PROJECT: katana
+        PROJECT: crossbow
       input_mapping:
         repo: pull-request
     - task: sbt-it-test
       file: pull-request/ci/tasks/sbt/it-test.yml
       params:
-        PROJECT: katana
+        PROJECT: crossbow
       input_mapping:
         repo: pull-request
   on_failure:
     put: pull-request
     params:
-      context: katana/scala
+      context: crossbow/scala
       path: pull-request
       status: failure
   on_success:
     put: pull-request
     params:
-      context: katana/scala
+      context: crossbow/scala
       path: pull-request
       status: success
 - name: bump-version
@@ -96,14 +101,14 @@ jobs:
   - task: bump-version
     file: concourse-tasks/version/tasks/bump-version.yaml
     params:
-      VERSION_PATH: katana/version
+      VERSION_PATH: crossbow/version
     input_mapping:
       repo: hawkeye-repo
       tasks: concourse-tasks
   - put: version
     params:
       file: new-version/version
-- name: build-image
+- name: release
   serial: true
   plan:
   - aggregate:
@@ -117,46 +122,9 @@ jobs:
   - task: sbt-assembly
     file: hawkeye-repo/ci/tasks/sbt/assembly.yml
     params:
-      PROJECT: katana
+      PROJECT: crossbow
     input_mapping:
       repo: hawkeye-repo
-  - task: prepare-docker
-    file: hawkeye-repo/katana/ci/tasks/prepare-docker.yml
+  - put: jar-artifact
     params:
-      DOCKERFILE_PATH: katana/docker/Dockerfile
-      NAME: katana
-    input_mapping:
-      repo: hawkeye-repo
-- name: deploy-dev
-  serial: true
-  plan:
-  - aggregate:
-    - get: hawkeye-repo
-      passed:
-      - build-image
-    - get: version
-      passed:
-      - build-image
-      trigger: true
-  - task: deploy
-    file: hawkeye-repo/ci/tasks/kube/apply.yml
-    params:
-      TEMPLATE: katana/kube/kube.yml.tmpl
-    input_mapping:
-      repo: hawkeye-repo
-- name: deploy-us-prod
-  serial: true
-  plan:
-  - aggregate:
-    - get: hawkeye-repo
-      passed:
-      - deploy-dev
-    - get: version
-      passed:
-      - deploy-dev
-  - task: deploy
-    file: hawkeye-repo/ci/tasks/kube/apply.yml
-    params:
-      TEMPLATE: katana/kube/kube.yml.tmpl
-    input_mapping:
-      repo: hawkeye-repo
+      file: artifact/crossbow-*

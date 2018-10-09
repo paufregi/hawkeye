@@ -13,6 +13,17 @@ lazy val katana = project
   )
   .withTestLibraries(scalatest)
 
+lazy val crossbow = project
+  .basic(path = "crossbow", "crossbow", "lab.acme")
+  .withAssembly("target", "lab.acme.crossbow.Main")
+  .withLibraries(
+    typesafeConfig,
+    scalaLogging,
+    http4sDsl,
+    http4sBlazeServer
+  )
+  .withTestLibraries(scalatest)
+
 lazy val arrow = project
   .basic("archery/arrow", "arrow", "lab.acme")
   .withAssembly("target", "lab.acme.archery.arrow.Main")
