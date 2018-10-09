@@ -60,6 +60,7 @@ jobs:
   plan:
   - get: pull-request
     version: every
+    trigger: true
   - put: pull-request
     params:
       context: crossbow/scala
