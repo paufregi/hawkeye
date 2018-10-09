@@ -1,4 +1,4 @@
-package lab.acme
+package lab.acme.katana
 
 import org.scalatest.{FunSpec, Matchers}
 

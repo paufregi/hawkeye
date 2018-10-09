@@ -1,4 +1,4 @@
-package lab.acme
+package lab.acme.archery.arrow
 
 import org.scalatest.{FunSpec, Matchers}
 
