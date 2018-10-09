@@ -44,7 +44,7 @@ resources:
     access_key_id: ((aws-access-key-id))
     bucket: mm-shark
     initial_version: 0.0.0
-    key: hawkeye/archery/version
+    key: hawkeye/versions/archery
     region_name: us-east-1
     secret_access_key: ((aws-secret-access-key))
 - name: concourse-tasks
@@ -59,7 +59,7 @@ resources:
     secret_access_key: ((aws-secret-access-key))
     bucket: mm-shark
     region_name: us-east-1
-    regexp: hawkeye/archery/arrow-(\d+\.\d+\.\d+)
+    regexp: hawkeye/artifacts/arrow/arrow-(\d+\.\d+\.\d+)
 resource_types:
 - name: pull-request
   type: docker-image
