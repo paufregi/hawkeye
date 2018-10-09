@@ -1,4 +1,17 @@
-groups: []
+groups:
+- name: verify
+  jobs:
+  - verify-scala
+  - verify-python
+- name: deployment
+  jobs:
+  - bump-version
+  - build-jar
+  - build-image
+  - deploy-uat
+  - deploy-prod
+  - deploy-prod-us
+  - deploy-prod-eu
 resources:
 - name: hawkeye-repo
   type: git
@@ -46,7 +59,7 @@ resources:
     secret_access_key: ((aws-secret-access-key))
     bucket: mm-shark
     region_name: us-east-1
-    regexp: hawkeye/archery/archery-(\d+\.\d+\.\d+)
+    regexp: hawkeye/archery/arrow-(\d+\.\d+\.\d+)
 resource_types:
 - name: pull-request
   type: docker-image
