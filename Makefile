@@ -1,27 +1,23 @@
-FLY = fly
-CONCOURSE_URL = http://127.0.0.1:8080
-CONCOURSE_USER = test
-CONCOURSE_PASSWORD = test
-
-.PHONY : ci
+.PHONY : help ci ci-validate concourse-login
+.DEFAULT_GOAL := help
 
 
 ### CI
-ci : concourse-login ## Set all the pipeline in concourse.
-	$(FLY) -t local set-pipeline -p katana -c katana/ci/pipeline.yml -l ci/credentials.yml
-	$(FLY) -t local set-pipeline -p archery -c archery/ci/pipeline.yml -l ci/credentials.yml
-	$(FLY) -t local set-pipeline -p crossbow -c crossbow/ci/pipeline.yml -l ci/credentials.yml
+ci : ci-login ## Set all the pipeline in concourse
+	fly -t local set-pipeline -p katana -c katana/ci/pipeline.yml -l ci/credentials.yml
+	fly -t local set-pipeline -p archery -c archery/ci/pipeline.yml -l ci/credentials.yml
+	fly -t local set-pipeline -p crossbow -c crossbow/ci/pipeline.yml -l ci/credentials.yml
 
-ci-validate: concourse-login ## Validate
-	$(FLY) validate-pipeline -c katana/ci/pipeline.yml -l ci/credentials.yml
-	$(FLY) validate-pipeline -c archery/ci/pipeline.yml -l ci/credentials.yml
-	$(FLY) validate-pipeline -c crossbow/ci/pipeline.yml -l ci/credentials.yml
+ci-validate : ci-login ## Validate pipelines
+	fly validate-pipeline -c katana/ci/pipeline.yml -l ci/credentials.yml
+	fly validate-pipeline -c archery/ci/pipeline.yml -l ci/credentials.yml
+	fly validate-pipeline -c crossbow/ci/pipeline.yml -l ci/credentials.yml
 
-concourse-login :
-	$(FLY) login -t local -u $(CONCOURSE_USER) -p $(CONCOURSE_PASSWORD) -c $(CONCOURSE_URL)
+ci-login : ## Concourse login
+	fly login -t local -u test -p test -c http://127.0.0.1:8080
 
 
-### Misc
+### HELP
 help: ## Show this help dialog.
 	@IFS=$$'\n' ; \
 	help_lines=(`fgrep -h "##" $(MAKEFILE_LIST) | grep -v '###' | sed -e 's/\\$$//' | sed -e 's/##/:/'`); \
