@@ -1,6 +1,5 @@
 package lab.acme
 
-import lab.acme.hawkeye.Dependencies._
 import sbt._
 import sbt.Keys._
 import sbtassembly.AssemblyKeys._

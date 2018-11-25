@@ -4,8 +4,6 @@ import sbt._
 
 object Dependencies {
 
-  def testDependencies(list: Seq[ModuleID]): Seq[ModuleID] = list.map(_ % "test,it")
-
   private object Version {
     lazy val typesafeConfig = "1.3.3"
     lazy val scalaLogging = "3.9.0"
