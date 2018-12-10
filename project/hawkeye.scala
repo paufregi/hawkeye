@@ -13,7 +13,7 @@ package object hawkeye {
         .configs(IntegrationTest)
         .settings(Defaults.itSettings: _*)
         .settings(Settings.general: _*)
-        .settings(DirectoryLayoutSettings.defaults)
+        .settings(Settings.directoryLayout)
         .settings(
           name := projectName,
           organization := org
