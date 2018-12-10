@@ -21,7 +21,7 @@ echo "sbt \ "
 echo "-ivy \"$WORKING_FOLDER/.ivy2\" \ "
 echo "-Dsbt.global.base=\"$WORKING_FOLDER/.sbt/1.0\" \ "
 echo "-Dsbt.repository.config=\"$WORKING_FOLDER/repositories\" \ "
-echo "${COMMAND}"
+echo "${SBT_COMMANDS}"
 
 
 sbt \

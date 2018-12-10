@@ -7,7 +7,7 @@ image_resource:
 
 params:
   SRC_PATH: .
-  COMMANDS: compile
+  SBT_COMMANDS: compile
 
 inputs:
 - name: repo
