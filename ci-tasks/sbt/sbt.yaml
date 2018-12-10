@@ -1,4 +1,3 @@
----
 platform: linux
 
 image_resource:
@@ -8,18 +7,17 @@ image_resource:
 
 params:
   SRC_PATH: .
-  PROJECT:
+  COMMANDS: compile
 
 inputs:
 - name: repo
 
-outputs:
-- name: test-result
-
 run:
   path: /bin/bash
   args:
-  - repo/ci/tasks/sbt/it-test.sh
+  - repo/ci-tasks/sbt/sbt.sh
 
 caches:
-  - path: .ivy2
+- path: .ivy2
+- path: .sbt
+- path: .coursier
