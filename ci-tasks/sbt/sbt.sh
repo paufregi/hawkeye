@@ -16,14 +16,5 @@ export SBT_OPTS="-Xms512M -Xmx2048M -Xss2M -XX:MaxMetaspaceSize=1024M"
 
 cd "repo/${SRC_PATH}"
 
-
-echo "sbt ${SBT_COMMANDS} \ "
-echo "-ivy \"$WORKING_FOLDER/.ivy2\" \ "
-echo "-Dsbt.global.base=\"$WORKING_FOLDER/.sbt/1.0\" \ "
-echo "-Dsbt.repository.config=\"$WORKING_FOLDER/repositories\" \ "
-
-sbt ${SBT_COMMANDS} \
--ivy "$WORKING_FOLDER/.ivy2" \
--Dsbt.global.base="$WORKING_FOLDER/.sbt/1.0" \
--Dsbt.repository.config="$WORKING_FOLDER/repositories" \
+sbt -ivy "$WORKING_FOLDER/.ivy2" -Dsbt.global.base="$WORKING_FOLDER/.sbt/1.0" -Dsbt.repository.config="$WORKING_FOLDER/repositories" ${SBT_COMMANDS}
 
