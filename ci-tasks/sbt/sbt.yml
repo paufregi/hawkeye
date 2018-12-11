@@ -7,6 +7,7 @@ image_resource:
 
 params:
   SRC_PATH: .
+  SBT_MODULE: ''
   SBT_COMMANDS: compile
 
 inputs:
