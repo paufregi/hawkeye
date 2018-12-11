@@ -16,7 +16,8 @@ export SBT_OPTS="-Xms512M -Xmx2048M -Xss2M -XX:MaxMetaspaceSize=1024M"
 
 cd "repo/${SRC_PATH}"
 
-if [ ! -z "$SBT_MODULE" ] && export SBT_PROJECT="project $SBT_MODULE"
+
+[ ! -z "$SBT_MODULE" ] && export SBT_PROJECT="project $SBT_MODULE"
 
 sbt \
 -ivy "${WORKING_FOLDER}/.ivy2" \
