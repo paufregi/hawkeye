@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 export WORKING_FOLDER=$( pwd )
 export COURSIER_CACHE="$WORKING_FOLDER/.coursier"
 
@@ -18,10 +16,7 @@ export SBT_OPTS="-Xms512M -Xmx2048M -Xss2M -XX:MaxMetaspaceSize=1024M"
 
 cd "repo/${SRC_PATH}"
 
-if [ -z "$SBT_MODULE" ]
-then
-    export SBT_PROJECT="project $SBT_MODULE"
-fi
+if [ ! -z "$SBT_MODULE" ] && export SBT_PROJECT="project $SBT_MODULE"
 
 sbt \
 -ivy "${WORKING_FOLDER}/.ivy2" \
